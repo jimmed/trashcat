@@ -6,10 +6,17 @@
   "author": "Jim O'Brien <jim@jimmed.net>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest"
   },
   "devDependencies": {
+    "@types/jest": "^25.2.1",
     "@types/node": "^13.13.0",
+    "jest": "^25.4.0",
+    "ts-jest": "^25.4.0",
     "typescript": "^3.8.3"
+  },
+  "jest": {
+    "preset": "ts-jest"
   }
 }
