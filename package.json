@@ -1,22 +1,26 @@
 {
   "name": "binman",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "repository": "git@github.com:jimmed/binman.git",
   "author": "Jim O'Brien <jim@jimmed.net>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b tsconfig.build.json",
     "test": "jest"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
+    "@types/lodash": "^4.14.150",
     "@types/node": "^13.13.0",
     "jest": "^25.4.0",
     "ts-jest": "^25.4.0",
     "typescript": "^3.8.3"
   },
-  "jest": {
-    "preset": "ts-jest"
-  }
+  "files": [
+    "dist"
+  ]
 }
