@@ -1,0 +1,15 @@
+{
+  "name": "binman",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:jimmed/binman.git",
+  "author": "Jim O'Brien <jim@jimmed.net>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.0",
+    "typescript": "^3.8.3"
+  }
+}
