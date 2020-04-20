@@ -1,18 +1,17 @@
-import { BufferCodec } from "../types";
 import { mapValues } from "lodash";
+import { BufferCodec } from "../types";
 import { NumberEncoding } from "./encoding";
-import { parseNumber, Output } from "./parser";
-import { serializeNumber } from "./serializer";
+import { Output } from "./parser";
 
 export const numberCodec = <Encoding extends NumberEncoding>(
   type: Encoding
 ) => ({
-  parse: parseNumber[type],
-  serialize: serializeNumber[type],
+  parse: number[type].parse,
+  serialize: number[type].serialize,
 });
 
 type NumberCodecPresets = {
-  [T in NumberEncoding]: BufferCodec<Output<T>>;
+  [T in NumberEncoding]: BufferCodec<Output<T>, any>;
 };
 
 export const number: NumberCodecPresets = mapValues(

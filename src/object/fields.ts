@@ -1,8 +1,8 @@
 import { BufferCodec, FieldsOf } from "../types";
 
 /**
- * Creates a codec for parsing a sequence of codecs, and assigning the result
- * of each to an object.
+ * A codec for parsing a Buffer into an object. Fields are executed in the
+ * order they are specified.
  *
  * ```ts
  * const userCodec = fields({
@@ -11,26 +11,27 @@ import { BufferCodec, FieldsOf } from "../types";
  * })
  * ```
  */
-export const fields = <T>(
-  fields: FieldsOf<T> = {} as FieldsOf<T>
-): BufferCodec<T> => {
-  const fieldEntries = Object.entries(fields) as [keyof T, BufferCodec<any>][];
+export const fields = <T, C>(
+  fields: FieldsOf<T, C> = {} as FieldsOf<T, C>
+): BufferCodec<T, C> => {
+  const fieldEntries = Object.entries(fields) as [
+    keyof T,
+    BufferCodec<any, C>
+  ][];
 
   return {
-    parse: (buffer) => {
-      let offset = 0;
-
-      const value: T = Object.fromEntries(
-        fieldEntries.map(([name, { parse }]) => {
-          const view = buffer.slice(offset);
-          const { value, byteLength } = parse(view);
-          offset += byteLength;
-          return [name, value];
-        })
-      );
-
-      return { value, byteLength: offset };
-    },
+    parse: (buffer, context) =>
+      fieldEntries.reduce(
+        ({ value, byteLength }, [name, { parse }]) => {
+          const view = buffer.slice(byteLength);
+          const result = parse(view, { ...context, ...value });
+          return {
+            value: { ...value, [name]: result },
+            byteLength: byteLength + result.byteLength,
+          };
+        },
+        { value: {}, byteLength: 0 }
+      ) as { value: T; byteLength: number },
     serialize: (parsed) =>
       Buffer.concat(
         fieldEntries.map(([name, { serialize }]) => serialize(parsed[name]))

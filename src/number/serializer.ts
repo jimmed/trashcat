@@ -1,4 +1,3 @@
-import { mapValues } from "lodash";
 import { byteLengths, NumberEncoding } from "./encoding";
 
 const bufferWriteFns = {
@@ -22,25 +21,18 @@ export interface NumberSerializer<T> {
   (value: T): Buffer;
 }
 
-interface numberSerializer {
-  <Encoding extends keyof typeof bufferWriteFns>(
-    type: Encoding
-  ): NumberSerializer<Parameters<Buffer[typeof bufferWriteFns[Encoding]]>[0]>;
-}
-
-type Input<Encoding extends keyof typeof bufferWriteFns> = Parameters<
+type Input<Encoding extends NumberEncoding> = Parameters<
   Buffer[typeof bufferWriteFns[Encoding]]
 >[0];
 
-function numberSerializer<Encoding extends keyof typeof bufferWriteFns>(
+export function numberSerializer<Encoding extends NumberEncoding>(
   type: Encoding
-) {
+): NumberSerializer<Input<Encoding>> {
   const writerFn: typeof bufferWriteFns[Encoding] = bufferWriteFns[type];
   const byteLength: typeof byteLengths[Encoding] = byteLengths[type];
   return ((value) => {
     const buf = Buffer.alloc(byteLength);
-    // @ts-ignore
-    buf[writerFn](value);
+    buf[writerFn](value as never);
     return buf;
   }) as NumberSerializer<Input<Encoding>>;
 }

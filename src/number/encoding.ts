@@ -31,3 +31,12 @@ export const byteLengths = {
   [NumberEncoding.BigInt64LE]: 8,
   [NumberEncoding.BigInt64BE]: 8,
 } as const;
+
+type BigIntTypes =
+  | NumberEncoding.BigUInt64LE
+  | NumberEncoding.BigUInt64BE
+  | NumberEncoding.BigInt64LE
+  | NumberEncoding.BigInt64BE;
+
+export const returnsBigInt = (type: NumberEncoding): type is BigIntTypes =>
+  byteLengths[type] === 8;

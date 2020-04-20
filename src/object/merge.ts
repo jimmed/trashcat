@@ -1,35 +1,45 @@
 import { BufferCodec } from "../types";
 
-export function merge<A extends {}>(a: BufferCodec<A>): BufferCodec<A>;
-export function merge<A extends {}, B extends {}>(
-  a: BufferCodec<A>,
-  b: BufferCodec<B>
-): BufferCodec<Omit<A, keyof B> & B>;
-export function merge<A extends {}, B extends {}, C extends {}>(
-  a: BufferCodec<A>,
-  b: BufferCodec<B>,
-  c: BufferCodec<C>
-): BufferCodec<Omit<Omit<A, keyof B> & B, keyof C> & C>;
-export function merge<A extends {}, B extends {}, C extends {}, D extends {}>(
-  a: BufferCodec<A>,
-  b: BufferCodec<B>,
-  c: BufferCodec<C>,
-  d: BufferCodec<D>
-): BufferCodec<Omit<Omit<Omit<A, keyof B> & B, keyof C> & C, keyof D> & D>;
+export function merge<A extends {}, CA>(
+  a: BufferCodec<A, CA>
+): BufferCodec<A, CA>;
+export function merge<A extends {}, B extends {}, CA>(
+  a: BufferCodec<A, CA>,
+  b: BufferCodec<B, A & CA>
+): BufferCodec<Omit<A, keyof B> & B, CA>;
+export function merge<A extends {}, B extends {}, C extends {}, CA>(
+  a: BufferCodec<A, CA>,
+  b: BufferCodec<B, A & CA>,
+  c: BufferCodec<C, A & B & CA>
+): BufferCodec<Omit<Omit<A, keyof B> & B, keyof C> & C, CA>;
 export function merge<
   A extends {},
   B extends {},
   C extends {},
   D extends {},
-  E extends {}
+  CA
 >(
-  a: BufferCodec<A>,
-  b: BufferCodec<B>,
-  c: BufferCodec<C>,
-  d: BufferCodec<D>,
-  e: BufferCodec<E>
+  a: BufferCodec<A, CA>,
+  b: BufferCodec<B, A & CA>,
+  c: BufferCodec<C, A & B & CA>,
+  d: BufferCodec<D, A & B & C & CA>
+): BufferCodec<Omit<Omit<Omit<A, keyof B> & B, keyof C> & C, keyof D> & D, CA>;
+export function merge<
+  A extends {},
+  B extends {},
+  C extends {},
+  D extends {},
+  E extends {},
+  CA
+>(
+  a: BufferCodec<A, CA>,
+  b: BufferCodec<B, A & CA>,
+  c: BufferCodec<C, A & B & CA>,
+  d: BufferCodec<D, A & B & C & CA>,
+  e: BufferCodec<E, A & B & C & D & CA>
 ): BufferCodec<
-  Omit<Omit<Omit<Omit<A, keyof B> & B, keyof C> & C, keyof D> & D, keyof E> & E
+  Omit<Omit<Omit<Omit<A, keyof B> & B, keyof C> & C, keyof D> & D, keyof E> & E,
+  CA
 >;
 
 /**
@@ -46,21 +56,23 @@ export function merge<
  * // => { userId: 1234, foo: 1337 }
  * ```
  */
-export function merge(...codecs: BufferCodec<any>[]): BufferCodec<any> {
+export function merge<C>(
+  ...codecs: BufferCodec<any, C>[]
+): BufferCodec<any, C> {
   return {
-    parse: (buffer: Buffer) =>
+    parse: (buffer, context) =>
       codecs.reduce(
         ({ value, byteLength }, codec) => {
           const view = buffer.slice(byteLength);
-          const result = codec.parse(view);
+          const result = codec.parse(view, value);
           return {
             value: { ...value, ...result.value },
             byteLength: byteLength + result.byteLength,
           };
         },
-        { value: {}, byteLength: 0 }
+        { value: context, byteLength: 0 }
       ),
-    serialize: (input: any) =>
+    serialize: (input) =>
       Buffer.concat(codecs.map((codec) => codec.serialize(input))),
   };
 }

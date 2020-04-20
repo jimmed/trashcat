@@ -1,5 +1,4 @@
 import { byteLengths, NumberEncoding } from "./encoding";
-import { mapValues } from "lodash";
 
 const bufferReadFns = {
   [NumberEncoding.UInt8]: "readUInt8",
@@ -22,18 +21,16 @@ export interface NumberParser<Parsed, Length extends number> {
   (buffer: Buffer): { value: Parsed; byteLength: Length };
 }
 
-export type Output<T extends keyof typeof bufferReadFns> = ReturnType<
+export type Output<T extends NumberEncoding> = ReturnType<
   Buffer[typeof bufferReadFns[T]]
 >;
 
-interface numberParser {
-  <T extends NumberEncoding>(type: T): NumberParser<
-    ReturnType<Buffer[typeof bufferReadFns[T]]>,
-    typeof byteLengths[T]
-  >;
-}
-
-function numberParser<Encoding extends NumberEncoding>(type: Encoding) {
+export function numberParser<Encoding extends NumberEncoding>(
+  type: Encoding
+): NumberParser<
+  ReturnType<Buffer[typeof bufferReadFns[Encoding]]>,
+  typeof byteLengths[Encoding]
+> {
   const readerFn: typeof bufferReadFns[Encoding] = bufferReadFns[type];
   const byteLength: typeof byteLengths[Encoding] = byteLengths[type];
   return ((buffer) => ({
