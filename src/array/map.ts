@@ -1,6 +1,6 @@
 import { BufferCodec } from "../types";
 
-export const mapUntil = <T, C>(
+export const map = <T, C>(
   codec: BufferCodec<T, C>,
   until: (buffer: Buffer, context: C, index: number, results: T[]) => boolean
 ): BufferCodec<T[], C> => ({
@@ -21,6 +21,3 @@ export const mapUntil = <T, C>(
   serialize: (parsed) =>
     Buffer.concat(parsed.map((item) => codec.serialize(item))),
 });
-
-export const times = <T, C>(codec: BufferCodec<T, C>, times: number) =>
-  mapUntil(codec, (_, __, index) => index < times);

@@ -1,6 +1,6 @@
 import { NumberEncoding } from "../encoding";
 
-export const encodings = [
+export const fixtures = [
   [NumberEncoding.UInt8, 1, [255], 255],
   [NumberEncoding.UInt16LE, 2, [10, 13], 3338],
   [NumberEncoding.UInt16BE, 2, [10, 13], 2573],

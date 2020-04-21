@@ -6,7 +6,7 @@ export const nullTerminatedString = <C>(
   parse: (buffer) => {
     const byteLength = buffer.indexOf(0);
     const value = buffer.slice(0, byteLength).toString(encoding);
-    return { value, byteLength };
+    return { value, byteLength: byteLength + 1 };
   },
   serialize: (input) =>
     Buffer.concat([Buffer.from(input, encoding), Buffer.from([0])]),

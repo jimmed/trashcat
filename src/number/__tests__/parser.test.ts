@@ -1,8 +1,8 @@
-import { number } from "../codec";
-import { encodings } from "./encodings";
+import { number } from "../encoding";
+import { fixtures } from "./fixtures";
 
 describe("numberParser", () => {
-  describe.each(encodings)(
+  describe.each(fixtures)(
     "with %s encoding",
     (type, byteLength, input, expected) => {
       let result: { value: bigint | number; byteLength: number };

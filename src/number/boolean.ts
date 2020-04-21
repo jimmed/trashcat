@@ -1,9 +1,7 @@
 import { mapValues } from "lodash";
 import { BufferCodec } from "../types";
 import { extend } from "../util/extend";
-import { number } from "./codec";
-import { NumberEncoding, returnsBigInt } from "./encoding";
-import { Output } from "./parser";
+import { number, NumberEncoding, Output, returnsBigInt } from "./encoding";
 
 export type BooleanCodecPresets = {
   [T in NumberEncoding]: BufferCodec<boolean, any>;
