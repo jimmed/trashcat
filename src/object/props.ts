@@ -11,7 +11,7 @@ import { BufferCodec, FieldsOf } from "../types";
  * })
  * ```
  */
-export const fields = <T, C>(fields: FieldsOf<T, C>): BufferCodec<T, C> => {
+export const props = <T, C>(fields: FieldsOf<T, C>): BufferCodec<T, C> => {
   const fieldEntries = Object.entries(fields) as [
     keyof T,
     BufferCodec<any, C>

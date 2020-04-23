@@ -1,5 +1,5 @@
 import { boolean } from "../boolean";
-import { number, returnsBigInt } from "../encoding";
+import { integer, returnsBigInt } from "../integer";
 import { fixtures } from "./fixtures";
 
 describe.each(fixtures)("with %s encoding", (type, byteLength) => {
@@ -10,7 +10,7 @@ describe.each(fixtures)("with %s encoding", (type, byteLength) => {
     const numValue = returnsBigInt(type) ? bigintValue : intValue;
     it("serializes a boolean to a number", () => {
       const encoded = boolean[type].serialize(boolValue);
-      expect(number[type].parse(encoded, {})).toEqual({
+      expect(integer[type].parse(encoded, {})).toEqual({
         value: numValue,
         byteLength,
       });
@@ -18,7 +18,7 @@ describe.each(fixtures)("with %s encoding", (type, byteLength) => {
 
     it("parses a number to a boolean", () => {
       // @ts-ignore
-      const encoded = number[type].serialize(numValue);
+      const encoded = integer[type].serialize(numValue);
       expect(boolean[type].parse(encoded, {})).toEqual({
         value: boolValue,
         byteLength,

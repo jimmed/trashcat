@@ -1,2 +1,2 @@
-export * from "./fields";
+export * from "./props";
 export * from "./merge";

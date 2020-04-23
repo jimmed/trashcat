@@ -1,13 +1,13 @@
-import { number } from "../../number";
+import { integer } from "../../number";
 
 export const userConfig = {
-  age: number.UInt8,
-  money: number.BigUInt64LE,
+  age: integer.UInt8,
+  money: integer.BigUInt64LE,
 } as const;
 
 export const user = { age: 27, money: 1_000_000_000_000_000_000n };
 export const encoded = Buffer.concat([
-  number.UInt8.serialize(user.age),
-  number.BigUInt64LE.serialize(user.money),
+  integer.UInt8.serialize(user.age),
+  integer.BigUInt64LE.serialize(user.money),
 ]);
 export const context = { context: true };

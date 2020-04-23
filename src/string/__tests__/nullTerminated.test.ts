@@ -3,7 +3,7 @@ import { nullTerminatedString } from "../nullTerminated";
 describe("nullTerminatedString", () => {
   const raw = "hello world";
   const buffer = Buffer.concat([Buffer.from(raw, "utf8"), Buffer.from([0])]);
-  const codec = nullTerminatedString("utf8");
+  const codec = nullTerminatedString();
 
   it("parses a null-terminated string", () => {
     expect(codec.parse(buffer, {})).toHaveProperty("value", raw);

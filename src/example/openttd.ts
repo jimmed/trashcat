@@ -1,14 +1,8 @@
-import {
-  assert,
-  boolean,
-  enumerator,
-  fields,
-  fixedLengthString,
-  merge,
-  nullTerminatedString,
-  number,
-  times,
-} from "..";
+import { times } from "../array";
+import { boolean, integer } from "../number";
+import { merge, props } from "../object";
+import { string } from "../string";
+import { enumerator, validate } from "../util";
 
 enum MapType {
   Temperate = 0,
@@ -18,40 +12,40 @@ enum MapType {
 }
 
 const basicStatsPackage = merge(
-  fields({
-    packetVersion: number.UInt8,
+  props({
+    packetVersion: validate(
+      integer.UInt8,
+      (v) => v === 4,
+      `Only packet version 4 is supported`
+    ),
   }),
-  assert(
-    ({ packetVersion }) => packetVersion === 4,
-    `Only packet version 4 is supported`
-  ),
-  fields({
-    grfCount: number.UInt8,
+  props({
+    grfCount: integer.UInt8,
   }),
-  fields({
+  props({
     grfs: times(
-      fields({
-        id: fixedLengthString(4, "hex"),
-        md5: fixedLengthString(16, "hex"),
+      props({
+        id: string.fixedLength(4, "hex"),
+        md5: string.fixedLength(16, "hex"),
       }),
       (_, ctx) => ctx.grfCount
     ),
-    gameDate: number.UInt32LE,
-    startDate: number.UInt32LE,
-    maxCompanies: number.UInt8,
-    maxSpectators: number.UInt8,
-    name: nullTerminatedString("utf8"),
-    gameVersion: nullTerminatedString("utf8"),
-    language: number.UInt8,
+    gameDate: integer.UInt32LE,
+    startDate: integer.UInt32LE,
+    maxCompanies: integer.UInt8,
+    maxSpectators: integer.UInt8,
+    name: string.nullTerminated(),
+    gameVersion: string.nullTerminated(),
+    language: integer.UInt8,
     hasPassword: boolean.UInt8,
-    maxPlayers: number.UInt8,
-    onlinePlayers: number.UInt8,
-    onlineSpectators: number.UInt8,
-    mapName: nullTerminatedString("utf8"),
-    mapWidth: number.UInt16LE,
-    mapHeight: number.UInt16BE,
+    maxPlayers: integer.UInt8,
+    onlinePlayers: integer.UInt8,
+    onlineSpectators: integer.UInt8,
+    mapName: string.nullTerminated(),
+    mapWidth: integer.UInt16LE,
+    mapHeight: integer.UInt16BE,
     mapType: enumerator<MapType>(
-      number.UInt8,
+      integer.UInt8,
       Object.values(MapType) as MapType[]
     ),
     isDedicated: boolean.UInt8,
@@ -59,36 +53,38 @@ const basicStatsPackage = merge(
 );
 
 const companyStatsPacket = merge(
-  fields({ packetVersion: number.UInt8 }),
-  assert(
-    ({ packetVersion }) => packetVersion === 6,
-    `Only packet version 6 is supported`
-  ),
-  fields({ companyCount: number.UInt8 }),
-  fields({
+  props({
+    packetVersion: validate(
+      integer.UInt8,
+      (v) => v === 6,
+      `Only packet version 6 is supported`
+    ),
+    companyCount: integer.UInt8,
+  }),
+  props({
     companies: times(
-      fields({
-        id: number.UInt8,
-        name: nullTerminatedString("utf8"),
-        startYear: number.UInt32LE,
-        value: number.BigUInt64LE,
-        money: number.BigUInt64LE,
-        income: number.BigUInt64BE,
-        performance: number.UInt16LE,
+      props({
+        id: integer.UInt8,
+        name: string.nullTerminated(),
+        startYear: integer.UInt32LE,
+        value: integer.BigUInt64LE,
+        money: integer.BigUInt64LE,
+        income: integer.BigUInt64BE,
+        performance: integer.UInt16LE,
         hasPassword: boolean.UInt8,
-        vehicleCounts: fields({
-          train: number.UInt16LE,
-          truck: number.UInt16LE,
-          bus: number.UInt16LE,
-          plane: number.UInt16LE,
-          ship: number.UInt16LE,
+        vehicleCounts: props({
+          train: integer.UInt16LE,
+          truck: integer.UInt16LE,
+          bus: integer.UInt16LE,
+          plane: integer.UInt16LE,
+          ship: integer.UInt16LE,
         }),
-        stationCounts: fields({
-          train: number.UInt16LE,
-          truck: number.UInt16LE,
-          bus: number.UInt16LE,
-          plane: number.UInt16LE,
-          ship: number.UInt16LE,
+        stationCounts: props({
+          train: integer.UInt16LE,
+          truck: integer.UInt16LE,
+          bus: integer.UInt16LE,
+          plane: integer.UInt16LE,
+          ship: integer.UInt16LE,
         }),
       }),
       (_, ctx) => ctx.companyCount

@@ -1,9 +1,9 @@
-import { extend } from "../";
-import { number } from "../../number";
+import { extend } from "../extend";
+import { integer } from "../../number";
 
 describe("extend", () => {
   const codec = extend(
-    number.UInt16LE,
+    integer.UInt16LE,
     (number) => new Date(number),
     (date) => +date
   );

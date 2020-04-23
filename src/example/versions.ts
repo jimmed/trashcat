@@ -1,12 +1,7 @@
-import {
-  choose,
-  constant,
-  enumerator,
-  fields,
-  merge,
-  number,
-  Parsed,
-} from "..";
+import { props, merge } from "../object";
+import { constant, enumerator, choose } from "../util";
+import { integer } from "../number";
+import { Parsed } from "../types";
 
 enum Version {
   V1 = 1,
@@ -17,20 +12,20 @@ export interface Header {
   version: Version;
 }
 
-export const bodyV1 = fields({
+export const bodyV1 = props({
   version: constant(Version.V1 as const),
-  foo: number.UInt8,
+  foo: integer.UInt8,
 });
 
-export const bodyV2 = fields({
+export const bodyV2 = props({
   version: constant(Version.V2 as const),
-  bar: number.UInt8,
+  bar: integer.UInt8,
 });
 
 export const packet = merge(
-  fields({
+  props({
     version: enumerator<Version>(
-      number.UInt8,
+      integer.UInt8,
       Object.values(Version) as Version[]
     ),
   }),

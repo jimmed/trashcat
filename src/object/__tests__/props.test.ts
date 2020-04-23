@@ -1,13 +1,9 @@
-import { context, encoded, user } from "./fixtures";
-import { merge } from "../merge";
 import { integer } from "../../number";
 import { props } from "../props";
+import { context, encoded, user, userConfig } from "./fixtures";
 
-describe("merge", () => {
-  const codec = merge(
-    props({ age: integer.UInt8 }),
-    props({ money: integer.BigUInt64LE })
-  );
+describe("props", () => {
+  const codec = props(userConfig);
 
   describe("parse", () => {
     beforeEach(() => {
@@ -18,7 +14,7 @@ describe("merge", () => {
     it("correctly parses an object", () => {
       expect(codec.parse(encoded, context)).toEqual({
         byteLength: 9,
-        value: { ...context, ...user },
+        value: user,
       });
     });
 

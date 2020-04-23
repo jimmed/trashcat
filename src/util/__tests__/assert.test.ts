@@ -1,4 +1,4 @@
-import { assert } from "../";
+import { assert } from "../assert";
 
 describe("assert", () => {
   const goodContext = { failed: false };

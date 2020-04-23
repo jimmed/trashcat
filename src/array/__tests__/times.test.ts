@@ -1,6 +1,6 @@
-import { times } from "../";
-import { number } from "../../number";
-import { fields, merge } from "../../object";
+import { integer } from "../../number";
+import { merge, props } from "../../object";
+import { times } from "../times";
 
 const users = [
   { age: 27, money: 1_000n },
@@ -9,7 +9,7 @@ const users = [
   { age: 72, money: 1_000_000_000n },
 ];
 
-const userCodec = fields({ age: number.UInt8, money: number.BigUInt64LE });
+const userCodec = props({ age: integer.UInt8, money: integer.BigUInt64LE });
 const encoded = Buffer.concat(users.map(userCodec.serialize));
 
 describe("times", () => {
@@ -30,13 +30,13 @@ describe("times", () => {
 
   describe("with a dynamic-length array", () => {
     const encodedWithCount = Buffer.concat([
-      number.UInt8.serialize(4),
+      integer.UInt8.serialize(4),
       encoded,
     ]);
 
     const codec = merge(
-      fields({ userCount: number.UInt8 }),
-      fields({
+      props({ userCount: integer.UInt8 }),
+      props({
         users: times(
           userCodec,
           (_, ctx: { userCount: number }) => ctx.userCount

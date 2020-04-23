@@ -1,7 +1,7 @@
-import { merge, fields } from "../../object";
-import { number } from "../../number";
-import { tap } from "../";
+import { integer } from "../../number";
+import { merge, props } from "../../object";
 import { BufferCodec } from "../../types";
+import { tap } from "../tap";
 
 describe("tap", () => {
   const encoded = Buffer.from([27, 28]);
@@ -12,7 +12,7 @@ describe("tap", () => {
   let codec: BufferCodec<{ age: number }, {}>;
   beforeEach(() => {
     callback = jest.fn();
-    codec = merge(fields({ age: number.UInt8 }), tap(callback));
+    codec = merge(props({ age: integer.UInt8 }), tap(callback));
   });
 
   it("calls the callback when parsing", () => {
@@ -37,6 +37,6 @@ describe("tap", () => {
   });
 
   it("does not affect serialisation", () => {
-    expect(codec.serialize(parsed)).toEqual(number.UInt8.serialize(27));
+    expect(codec.serialize(parsed)).toEqual(integer.UInt8.serialize(27));
   });
 });

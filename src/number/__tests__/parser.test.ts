@@ -1,4 +1,4 @@
-import { number } from "../encoding";
+import { integer } from "../integer";
 import { fixtures } from "./fixtures";
 
 describe("numberParser", () => {
@@ -7,7 +7,7 @@ describe("numberParser", () => {
     (type, byteLength, input, expected) => {
       let result: { value: bigint | number; byteLength: number };
       beforeEach(() => {
-        result = number[type].parse(Buffer.from(input), {});
+        result = integer[type].parse(Buffer.from(input), {});
       });
 
       it("returns the correct byteLength", () => {
@@ -22,8 +22,8 @@ describe("numberParser", () => {
 
   describe("TypeScript support", () => {
     it("assigns the correct type for 'value'", () => {
-      const x: number = number.UInt8.parse(Buffer.from([0]), {}).value;
-      const y: bigint = number.BigInt64BE.parse(
+      const x: number = integer.UInt8.parse(Buffer.from([0]), {}).value;
+      const y: bigint = integer.BigInt64BE.parse(
         Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]),
         {}
       ).value;

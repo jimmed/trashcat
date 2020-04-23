@@ -1,2 +1,2 @@
 export * from "./boolean";
-export * from "./encoding";
+export * from "./integer";

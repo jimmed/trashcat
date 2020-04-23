@@ -1,7 +1,7 @@
-import { number } from "../../number";
-import { fixedLengthString } from "../../string";
+import { integer } from "../../number";
+import { string } from "../../string";
 import { BufferCodec } from "../../types";
-import { enumerator } from "../";
+import { enumerator } from "../enum";
 
 describe("enumerator", () => {
   describe("with a number codec", () => {
@@ -11,7 +11,7 @@ describe("enumerator", () => {
     }
 
     const codec = enumerator<NumberEnum>(
-      number.UInt8,
+      integer.UInt8,
       Object.values(NumberEnum) as NumberEnum[]
     );
 
@@ -24,7 +24,7 @@ describe("enumerator", () => {
 
     it("throws an error if the parsed number is not in the enum", () => {
       expect(() => codec.parse(Buffer.from([3]), {})).toThrowError(
-        "Invalid value: 3"
+        "Invalid value"
       );
     });
 
@@ -35,7 +35,7 @@ describe("enumerator", () => {
     });
 
     it("throws an error if the serialized value is not in the enum", () => {
-      expect(() => codec.serialize(3)).toThrowError("Invalid value: 3");
+      expect(() => codec.serialize(3)).toThrowError("Invalid value");
     });
   });
 
@@ -45,7 +45,7 @@ describe("enumerator", () => {
       TWO = "two",
     }
     const codec = enumerator<StringEnum>(
-      fixedLengthString(3, "utf-8") as BufferCodec<StringEnum, any>,
+      string.fixedLength(3) as BufferCodec<StringEnum, any>,
       Object.values(StringEnum) as StringEnum[]
     );
 
@@ -58,7 +58,7 @@ describe("enumerator", () => {
 
     it("throws an error if the parsed string is not in the enum", () => {
       expect(() => codec.parse(Buffer.from("three", "utf8"), {})).toThrowError(
-        "Invalid value: thr"
+        "Invalid value"
       );
     });
 
@@ -70,7 +70,7 @@ describe("enumerator", () => {
 
     it("throws an error if the serialized string is not in the enum", () => {
       // @ts-ignore -- expected error
-      expect(() => codec.serialize("three")).toThrowError("Invalid value: thr");
+      expect(() => codec.serialize("three")).toThrowError("Invalid value");
     });
   });
 });

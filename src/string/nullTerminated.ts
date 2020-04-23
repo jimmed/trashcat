@@ -1,7 +1,7 @@
 import { BufferCodec } from "../types";
 
 export const nullTerminatedString = <C>(
-  encoding: BufferEncoding
+  encoding: BufferEncoding = "utf8"
 ): BufferCodec<string, C> => ({
   parse: (buffer) => {
     const byteLength = buffer.indexOf(0);

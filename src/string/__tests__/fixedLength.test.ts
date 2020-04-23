@@ -3,7 +3,7 @@ import { fixedLengthString } from "../fixedLength";
 describe("fixedLengthString", () => {
   const raw = "hello world";
   const buffer = Buffer.from(raw, "utf8");
-  const codec = fixedLengthString(raw.length, "utf8");
+  const codec = fixedLengthString(raw.length);
 
   it("parses a fixed-length string", () => {
     expect(codec.parse(buffer, {})).toHaveProperty("value", raw);
