@@ -1,8 +1,8 @@
-import { times } from "../array";
-import { boolean, integer } from "../number";
-import { merge, props } from "../object";
-import { string } from "../string";
-import { enumerator, validate } from "../util";
+import { times } from "../src/array";
+import { boolean, integer } from "../src/number";
+import { merge, props } from "../src/object";
+import { string } from "../src/string";
+import { enumerator, validate } from "../src/util";
 
 enum MapType {
   Temperate = 0,

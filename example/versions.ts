@@ -1,7 +1,7 @@
-import { props, merge } from "../object";
-import { constant, enumerator, choose } from "../util";
-import { integer } from "../number";
-import { Parsed } from "../types";
+import { props, merge } from "../src/object";
+import { constant, enumerator, choose } from "../src/util";
+import { integer } from "../src/number";
+import { Parsed } from "../src/types";
 
 enum Version {
   V1 = 1,

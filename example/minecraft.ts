@@ -9,12 +9,12 @@ import {
   padding,
   mergingContext,
   choose,
-} from "../util";
-import { string } from "../string";
-import { integer } from "../number";
-import { merge, props } from "../object";
-import { map } from "../array";
-import { Parsed } from "../types";
+} from "../src/util";
+import { string } from "../src/string";
+import { integer } from "../src/number";
+import { merge, props } from "../src/object";
+import { map } from "../src/array";
+import { Parsed } from "../src/types";
 
 const numericString = extend(
   string.nullTerminated(),
