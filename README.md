@@ -1,4 +1,4 @@
-# 🗑️🐼 trashpanda
+# 🗑️🐈 trashcat
 
 > A node.js toolkit for building binary codecs
 
@@ -18,21 +18,21 @@
 
 ## 🔌 Installation
 
-You may install `trashpanda` into your project using either `npm` or `yarn`:
+You may install `trashcat` into your project using either `npm` or `yarn`:
 
 ```sh
-$ npm install --save trashpanda
+$ npm install --save trashcat
 
 # or
 
-$ yarn add trashpanda
+$ yarn add trashcat
 ```
 
 ## 📑 Concepts
 
 ### Codecs
 
-These are the core building blocks of trashpanda. They deal with parsing and serializing a specific type of data. They are objects with two methods:
+These are the core building blocks of trashcat. They deal with parsing and serializing a specific type of data. They are objects with two methods:
 
 - `parse`, which takes a node.js Buffer (and optionally some context), and returns an object with the parsed value, and the length of the parsed data in bytes.
 - `serialize`, which takes some data, and serializes it into a Buffer.
@@ -41,12 +41,12 @@ You can mix and match built-in codecs with your own ones.
 
 ### Using built-in codecs
 
-Trashpanda provides a variety of built-in codecs, for dealing with commonprimitive types of data, such as integers and strings.
+trashcat provides a variety of built-in codecs, for dealing with commonprimitive types of data, such as integers and strings.
 
 For example, `integer.UInt8` is a codec for unsigned 8-bit integers:
 
 ```ts
-import { integer } from "trashpanda";
+import { integer } from "trashcat";
 
 integer.UInt8.parse(Buffer.from([25]), {});
 // => { value: 25, byteLength: 1 }
@@ -58,7 +58,7 @@ integer.UInt8.serialize(25);
 Another example is `string.nullTerminated`, which _returns_ a codec for null-terminated strings.
 
 ```ts
-import { string } from "trashpanda";
+import { string } from "trashcat";
 
 const codec = string.nullTerminated("ascii");
 
@@ -76,7 +76,7 @@ The built-in `extend` codec can take an existing codec, and wrap it with an addi
 In this example, we'll write a codec for hexadecimal colour codes (like `#FF0000` or `#E2E2E2`)
 
 ```ts
-import { extend, integer, times } from "trashpanda";
+import { extend, integer, times } from "trashcat";
 import { chunk, flowRight, invoke, map, parseInteger } from "lodash/fp";
 
 const colourCodec = extend(
@@ -104,7 +104,7 @@ In order to parse anything more complicated than a single value, we need to comp
 Built-in methods for composing codecs are provided, such as `props`, which is used for building up an object of typed values. This can be used as follows:
 
 ```ts
-import { props, integer, string } from "trashpanda";
+import { props, integer, string } from "trashcat";
 
 const userCodec = props({
   id: integer.UInt8,
@@ -132,7 +132,7 @@ The codecs passed into `props` will be used in the order they are defined.
 To use a series of codecs in order, and merge them into a single object, we can use the `merge` method.
 
 ```ts
-import { integer, merge, props, string } from 'trashpanda'
+import { integer, merge, props, string } from 'trashcat'
 
 const packetHeader = props({
   version: integer.UInt8
