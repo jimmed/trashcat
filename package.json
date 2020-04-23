@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "lint-staged": {
-    "**/*.{ts,json,md}": [
+    "**/*.{ts,json,md,yml}": [
       "prettier --write"
     ]
   },
