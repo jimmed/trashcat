@@ -9,6 +9,16 @@
     "build": "tsc -b tsconfig.build.json",
     "test": "jest"
   },
+  "lint-staged": {
+    "**/*.{ts,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "dependencies": {
     "lodash": "^4.17.15"
   },
@@ -16,7 +26,10 @@
     "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.150",
     "@types/node": "^13.13.0",
+    "husky": "^4.2.5",
     "jest": "^25.4.0",
+    "lint-staged": "^10.1.7",
+    "prettier": "^2.0.5",
     "ts-jest": "^25.4.0",
     "typescript": "^3.8.3"
   },

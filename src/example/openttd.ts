@@ -95,9 +95,3 @@ const companyStatsPacket = merge(
     ),
   })
 );
-
-companyStatsPacket
-  .parse(Buffer.alloc(0), {})
-  .value.companies.map((company) => company.stationCounts.plane);
-
-companyStatsPacket;
