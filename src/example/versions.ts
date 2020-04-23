@@ -1,49 +1,45 @@
-import { number } from "../number";
-import { fields, merge } from "../object";
-import { choose, enumerator } from "../util/";
-import { Parsed } from "../types";
+import {
+  choose,
+  constant,
+  enumerator,
+  fields,
+  merge,
+  number,
+  Parsed,
+} from "..";
 
-enum PacketVersion {
+enum Version {
   V1 = 1,
   V2 = 2,
 }
 
-export interface VersionHeader {
-  version: PacketVersion;
+export interface Header {
+  version: Version;
 }
 
-export const packetV1 = fields({
+export const bodyV1 = fields({
+  version: constant(Version.V1 as const),
   foo: number.UInt8,
 });
-export const packetV2 = fields({
+
+export const bodyV2 = fields({
+  version: constant(Version.V2 as const),
   bar: number.UInt8,
 });
 
-const versionMap = {
-  [PacketVersion.V1]: packetV1,
-  [PacketVersion.V2]: packetV2,
-} as const;
-
-interface PacketV1 extends Parsed<typeof packetV1> {}
-interface PacketV2 extends Parsed<typeof packetV2> {}
-type PacketBody = PacketV1 | PacketV2;
-
 export const packet = merge(
   fields({
-    version: enumerator<PacketVersion>(
+    version: enumerator<Version>(
       number.UInt8,
-      Object.values(PacketVersion) as PacketVersion[]
+      Object.values(Version) as Version[]
     ),
   }),
-  choose<
-    VersionHeader & PacketBody,
-    VersionHeader,
-    typeof packetV1 | typeof packetV2
-  >(
+  choose<Parsed<typeof bodyV1> | Parsed<typeof bodyV2>, Header, Version>(
     (_, ctx) => ctx.version,
     (ctx) => ctx.version,
-    versionMap
+    {
+      [Version.V1]: bodyV1,
+      [Version.V2]: bodyV2,
+    }
   )
 );
-
-packet.parse(Buffer.alloc(0), {}).value;

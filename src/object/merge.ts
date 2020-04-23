@@ -6,12 +6,12 @@ export function merge<A extends {}, CA>(
 export function merge<A extends {}, B extends {}, CA>(
   a: BufferCodec<A, CA>,
   b: BufferCodec<B, A & CA>
-): BufferCodec<Omit<A, keyof B> & B, CA>;
+): BufferCodec<A & B, CA>;
 export function merge<A extends {}, B extends {}, C extends {}, CA>(
   a: BufferCodec<A, CA>,
   b: BufferCodec<B, A & CA>,
   c: BufferCodec<C, A & B & CA>
-): BufferCodec<Omit<Omit<A, keyof B> & B, keyof C> & C, CA>;
+): BufferCodec<A & B & C, CA>;
 export function merge<
   A extends {},
   B extends {},
@@ -23,7 +23,7 @@ export function merge<
   b: BufferCodec<B, A & CA>,
   c: BufferCodec<C, A & B & CA>,
   d: BufferCodec<D, A & B & C & CA>
-): BufferCodec<Omit<Omit<Omit<A, keyof B> & B, keyof C> & C, keyof D> & D, CA>;
+): BufferCodec<A & B & C & D, CA>;
 export function merge<
   A extends {},
   B extends {},
@@ -37,10 +37,7 @@ export function merge<
   c: BufferCodec<C, A & B & CA>,
   d: BufferCodec<D, A & B & C & CA>,
   e: BufferCodec<E, A & B & C & D & CA>
-): BufferCodec<
-  Omit<Omit<Omit<Omit<A, keyof B> & B, keyof C> & C, keyof D> & D, keyof E> & E,
-  CA
->;
+): BufferCodec<A & B & C & D & E, CA>;
 
 /**
  * Creates a codec which merges together multiple codecs, calling each

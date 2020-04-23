@@ -1,11 +1,14 @@
-import { boolean, number } from "../number";
-import { fields } from "../object/fields";
-import { merge } from "../object/merge";
-import { fixedLengthString } from "../string/fixedLength";
-import { nullTerminatedString } from "../string/nullTerminated";
-import { assert } from "../util/assert";
-import { enumerator } from "../util/enum";
-import { times } from "../array/times";
+import {
+  assert,
+  boolean,
+  enumerator,
+  fields,
+  fixedLengthString,
+  merge,
+  nullTerminatedString,
+  number,
+  times,
+} from "..";
 
 enum MapType {
   Temperate = 0,
@@ -92,3 +95,9 @@ const companyStatsPacket = merge(
     ),
   })
 );
+
+companyStatsPacket
+  .parse(Buffer.alloc(0), {})
+  .value.companies.map((company) => company.stationCounts.plane);
+
+companyStatsPacket;
