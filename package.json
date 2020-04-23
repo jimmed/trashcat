@@ -1,8 +1,8 @@
 {
-  "name": "binman",
+  "name": "trashpanda",
   "version": "1.0.0",
   "main": "./dist/index.js",
-  "repository": "git@github.com:jimmed/binman.git",
+  "repository": "git@github.com:jimmed/trashpanda.git",
   "author": "Jim O'Brien <jim@jimmed.net>",
   "license": "MIT",
   "scripts": {
@@ -16,8 +16,12 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn test"
     }
+  },
+  "engines": {
+    "node": ">=12"
   },
   "dependencies": {
     "lodash": "^4.17.15"
