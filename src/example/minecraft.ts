@@ -9,12 +9,12 @@ import {
   padding,
   mergingContext,
   choose,
-} from "../src/util";
-import { string } from "../src/string";
-import { integer } from "../src/number";
-import { merge, props } from "../src/object";
-import { map } from "../src/array";
-import { Parsed } from "../src/types";
+} from "../util";
+import { string } from "../string";
+import { integer } from "../number";
+import { merge, props } from "../object";
+import { mapWhile } from "../array";
+import { Parsed } from "../types";
 
 const numericString = extend(
   string.nullTerminated(),
@@ -109,7 +109,7 @@ const fullStatResponseBody = merge(
   merge(
     mergingContext(
       extend<string[], FullStat, { type: PacketType.Stat; full: true }>(
-        map(string.nullTerminated(), (b) => b.readUInt8() === 0),
+        mapWhile(string.nullTerminated(), (b) => b.readUInt8() === 0),
         flow(fromPairs, chunk(2)),
         flow(toPairs, flatten)
       )
@@ -119,7 +119,7 @@ const fullStatResponseBody = merge(
   padding(fullStatPaddingB.byteLength, fullStatPaddingB),
   merge(
     props({
-      players: map(string.nullTerminated(), (b) => b.readUInt8() === 0),
+      players: mapWhile(string.nullTerminated(), (b) => b.readUInt8() === 0),
     }),
     padding(1, 0)
   )
