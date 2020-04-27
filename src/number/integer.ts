@@ -1,4 +1,3 @@
-import { mapValues } from "lodash";
 import { BufferCodec } from "../types";
 
 export enum IntegerEncoding {
@@ -123,18 +122,16 @@ function integerSerializer<Encoding extends keyof typeof bufferWriteFns>(
   }) as IntegerSerializer<Input<Encoding>>;
 }
 
-export const integerCodec = <Encoding extends IntegerEncoding>(
-  type: Encoding
-) => ({
+const integerCodec = <Encoding extends IntegerEncoding>(type: Encoding) => ({
   parse: integerParser(type),
   serialize: integerSerializer(type),
 });
 
-export type integerCodecPresets = {
+type IntegerCodecs = {
   [T in IntegerEncoding]: BufferCodec<Output<T>, any>;
 };
 
-export const integer: integerCodecPresets = mapValues(
-  IntegerEncoding,
-  integerCodec
-) as integerCodecPresets;
+export const integer = Object.values(IntegerEncoding).reduce(
+  (acc, key) => ({ ...acc, [key]: integerCodec(key) }),
+  {}
+) as IntegerCodecs;

@@ -6,6 +6,5 @@ module.exports = {
     "!**/src/**/__tests__/fixtures.ts",
     "!**/src/**/__tests__/fixtures/**/*.ts",
     "!**/src/**/index.ts",
-    "!**/src/example/**/*.ts",
   ],
 };
