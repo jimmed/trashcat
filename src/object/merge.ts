@@ -1,5 +1,18 @@
 import { BufferCodec } from "../types";
 
+/**
+ * Creates a codec which merges together multiple codecs, calling each
+ * codec in sequence, and merging the object returned by each.
+ *
+ * @example
+ *  const userCodec = merge(
+ *    fields({ userId: number.UInt8 }),
+ *    fields({ foo: number.UInt8 })
+ *  )
+ *
+ *  userCodec.parse(Buffer.from([1234, 1337])).value
+ *  // => { userId: 1234, foo: 1337 }
+ */
 export function merge<A extends {}, CA>(
   a: BufferCodec<A, CA>
 ): BufferCodec<A, CA>;
@@ -92,21 +105,53 @@ export function merge<
   g: BufferCodec<E, A & B & C & D & E & F & CA>,
   h: BufferCodec<E, A & B & C & D & E & F & G & CA>
 ): BufferCodec<A & B & C & D & E & F & G & H, CA>;
+export function merge<
+  A extends {},
+  B extends {},
+  C extends {},
+  D extends {},
+  E extends {},
+  F extends {},
+  G extends {},
+  H extends {},
+  I extends {},
+  CA
+>(
+  a: BufferCodec<A, CA>,
+  b: BufferCodec<B, A & CA>,
+  c: BufferCodec<C, A & B & CA>,
+  d: BufferCodec<D, A & B & C & CA>,
+  e: BufferCodec<E, A & B & C & D & CA>,
+  f: BufferCodec<E, A & B & C & D & E & CA>,
+  g: BufferCodec<E, A & B & C & D & E & F & CA>,
+  h: BufferCodec<E, A & B & C & D & E & F & G & CA>,
+  i: BufferCodec<E, A & B & C & D & E & F & G & H & CA>
+): BufferCodec<A & B & C & D & E & F & G & H & I, CA>;
+export function merge<
+  A extends {},
+  B extends {},
+  C extends {},
+  D extends {},
+  E extends {},
+  F extends {},
+  G extends {},
+  H extends {},
+  I extends {},
+  J extends {},
+  CA
+>(
+  a: BufferCodec<A, CA>,
+  b: BufferCodec<B, A & CA>,
+  c: BufferCodec<C, A & B & CA>,
+  d: BufferCodec<D, A & B & C & CA>,
+  e: BufferCodec<E, A & B & C & D & CA>,
+  f: BufferCodec<E, A & B & C & D & E & CA>,
+  g: BufferCodec<E, A & B & C & D & E & F & CA>,
+  h: BufferCodec<E, A & B & C & D & E & F & G & CA>,
+  i: BufferCodec<E, A & B & C & D & E & F & G & H & CA>,
+  j: BufferCodec<E, A & B & C & D & E & F & G & H & I & CA>
+): BufferCodec<A & B & C & D & E & F & G & H & I & J, CA>;
 
-/**
- * Creates a codec which merges together multiple codecs, calling each
- * codec in sequence, and merging the object returned by each.
- *
- * @example ```ts
- * const userCodec = merge(
- *   fields({ userId: number.UInt8 }),
- *   fields({ foo: number.UInt8 })
- * )
- *
- * userCodec.parse(Buffer.from([1234, 1337])).value
- * // => { userId: 1234, foo: 1337 }
- * ```
- */
 export function merge<C>(
   ...codecs: BufferCodec<any, C>[]
 ): BufferCodec<any, C> {

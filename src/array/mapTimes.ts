@@ -6,7 +6,6 @@ export interface MapTimesCallback<C> {
 }
 
 export type MapTimesCount<C, K> = MapTimesCallback<C> | number | K;
-
 /**
  * When parsing, this codec creates an array by executing a codec a number of times.
  *
@@ -18,19 +17,20 @@ export type MapTimesCount<C, K> = MapTimesCallback<C> | number | K;
  * This can be supplied as:
  *
  *  - a number
- *  - a string. This must be a key from the context (assuming context is an object)
+ *  - a string. This must be a key from the context (assuming context is an object),
+ *    whose associated value is a number.
  *  - a callback which returns a number. The callback will be called before each iteration.
  *
- * @example ```ts
- * // A codec for a fixed-length array:
- * const threeUInt8s = mapTimes(integer.UInt8, 3)
+ * @example
+ *  // A codec for a fixed-length array:
+ *  const threeUInt8s = mapTimes(integer.UInt8, 3)
  *
- * // Getting the length from context by key:
- * const someUInt8s = merge(
- *   props({ count: integer.UInt8 }),
- *   props({ items: mapTimes(integer.UInt8, 'count') })
- * )
- * ```
+ * @example
+ *  // Getting the length from context by key:
+ *  const someUInt8s = merge(
+ *    props({ count: integer.UInt8 }),
+ *    props({ items: mapTimes(integer.UInt8, 'count') })
+ *  )
  */
 export function mapTimes<T, C>(
   codec: BufferCodec<T, C>,

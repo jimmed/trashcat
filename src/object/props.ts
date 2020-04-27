@@ -4,12 +4,11 @@ import { BufferCodec, FieldsOf } from "../types";
  * A codec for parsing a Buffer into an object. Fields are executed in the
  * order they are specified.
  *
- * ```ts
- * const userCodec = fields({
- *  userId: number.UInt8,
- *  foo: number.UInt16LE
- * })
- * ```
+ * @example
+ *  const userCodec = fields({
+ *   userId: number.UInt8,
+ *   foo: number.UInt16LE
+ *  })
  */
 export const props = <T, C>(fields: FieldsOf<T, C>): BufferCodec<T, C> => {
   const fieldEntries = Object.entries(fields) as [
