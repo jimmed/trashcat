@@ -122,14 +122,12 @@ function integerSerializer<Encoding extends keyof typeof bufferWriteFns>(
   }) as IntegerSerializer<Input<Encoding>>;
 }
 
-export const integerCodec = <Encoding extends IntegerEncoding>(
-  type: Encoding
-) => ({
+const integerCodec = <Encoding extends IntegerEncoding>(type: Encoding) => ({
   parse: integerParser(type),
   serialize: integerSerializer(type),
 });
 
-export type IntegerCodecs = {
+type IntegerCodecs = {
   [T in IntegerEncoding]: BufferCodec<Output<T>, any>;
 };
 
