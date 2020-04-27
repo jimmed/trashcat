@@ -13,6 +13,13 @@ type BooleanCodecs = {
   [T in IntegerEncoding]: BufferCodec<boolean, any>;
 };
 
+/**
+ * An object which maps from each `IntegerEncoding` to a codec
+ * that handles it as a boolean. All non-zero integers are
+ * considered `true` -- zero is considered `false`.
+ *
+ * @see {IntegerEncoding}
+ */
 export const boolean = Object.values(IntegerEncoding).reduce(
   (acc, key) => ({ ...acc, [key]: booleanCodec(key) }),
   {}
