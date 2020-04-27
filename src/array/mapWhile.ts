@@ -1,11 +1,10 @@
 import { BufferCodec } from "../types";
+import { reduceWhile, ReduceWhileCallback } from "./reduceWhile";
 
 /**
  * Called before each iteration of a `mapWhile` loop.
  */
-export interface MapWhileCallback<T, C> {
-  (buffer: Buffer, context: C, index: number, results: T[]): boolean;
-}
+export interface MapWhileCallback<T, C> extends ReduceWhileCallback<T[], C> {}
 
 /**
  * Maps over a given `codec` while `whileCallback` returns `true`.
@@ -18,23 +17,11 @@ export interface MapWhileCallback<T, C> {
 export const mapWhile = <T, C>(
   codec: BufferCodec<T, C>,
   whileCallback: MapWhileCallback<T, C>
-): BufferCodec<T[], C> => ({
-  parse: (buffer, context) => {
-    let results: T[] = [];
-    let offset = 0;
-    let index = 0;
-
-    while (whileCallback(buffer.slice(offset), context, index, results)) {
-      const view = buffer.slice(offset);
-      const lastResult = codec.parse(view, context);
-      offset += lastResult.byteLength;
-      index++;
-      results = [...results, lastResult.value];
-    }
-
-    return { value: results, byteLength: offset };
-  },
-
-  serialize: (parsed) =>
-    Buffer.concat(parsed.map((item) => codec.serialize(item))),
-});
+): BufferCodec<T[], C> =>
+  reduceWhile(
+    codec,
+    whileCallback,
+    (acc, item) => [...acc, item],
+    [] as T[],
+    (items) => items
+  );

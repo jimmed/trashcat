@@ -97,7 +97,7 @@ export function merge<
  * Creates a codec which merges together multiple codecs, calling each
  * codec in sequence, and merging the object returned by each.
  *
- * ```ts
+ * @example ```ts
  * const userCodec = merge(
  *   fields({ userId: number.UInt8 }),
  *   fields({ foo: number.UInt8 })
