@@ -1,8 +1,8 @@
-import { times } from "../src/array";
-import { boolean, integer } from "../src/number";
-import { merge, props } from "../src/object";
-import { string } from "../src/string";
-import { enumerator, validate } from "../src/util";
+import { mapTimes } from "../array";
+import { boolean, integer } from "../number";
+import { merge, props } from "../object";
+import { string } from "../string";
+import { enumerator, validate } from "../util";
 
 enum MapType {
   Temperate = 0,
@@ -23,7 +23,7 @@ const basicStatsPackage = merge(
     grfCount: integer.UInt8,
   }),
   props({
-    grfs: times(
+    grfs: mapTimes(
       props({
         id: string.fixedLength(4, "hex"),
         md5: string.fixedLength(16, "hex"),
@@ -62,7 +62,7 @@ const companyStatsPacket = merge(
     companyCount: integer.UInt8,
   }),
   props({
-    companies: times(
+    companies: mapTimes(
       props({
         id: integer.UInt8,
         name: string.nullTerminated(),
