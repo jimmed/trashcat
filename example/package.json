@@ -1,0 +1,16 @@
+{
+  "name": "@trashcat/examples",
+  "version": "2.0.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "trashcat": "link:../"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^26.0.1",
+    "ts-jest": "^25.5.0"
+  }
+}
