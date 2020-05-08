@@ -2,11 +2,11 @@
 
 > A node.js toolkit for building binary codecs
 
-## 💡 Features
+## 📦 Features
 
-- 🔢 **Parse and serialize binary data**
+- 🎯 **Parse and serialize binary data**
 
-  Useful for transforming structured data to/from a buffer.
+  Build codecs which can convert structured data into binary, and vice-versa.
 
 - 🏗 **Declarative, extensible API**
 
@@ -15,6 +15,15 @@
 - ✍ **First-class TypeScript inference support**
 
   The provided codecs can (mostly) infer the type of your parsed data, leaving you to get on with the fun parts!
+
+## 💡 Why would I use this?
+
+This library is for you, if:
+
+- you need to parse/serialize raw binary data, such as:
+  - reading/writing a custom file format
+  - interfacing with a network socket on an exotic protocol
+- you want a single source of truth for both your codec's logic, and the data types it handles
 
 ## 🔌 Installation
 
@@ -48,7 +57,7 @@ For example, `integer.UInt8` is a codec for unsigned 8-bit integers:
 ```ts
 import { integer } from "trashcat";
 
-integer.UInt8.parse(Buffer.from([25]), {});
+integer.UInt8.parse(Buffer.from([25]));
 // => { value: 25, byteLength: 1 }
 
 integer.UInt8.serialize(25);
@@ -62,159 +71,41 @@ import { string } from "trashcat";
 
 const codec = string.nullTerminated("ascii");
 
-codec.parse(Buffer.from("hello world", "ascii"), {});
+codec.parse(Buffer.from("hello world", "ascii"));
 // => { value: 'hello world', byteLength: 11 }
 
 codec.serialize("hello world");
 // => <Buffer 68 65 6c 6c 6f 20 77 6f 72 6c 64>
 ```
 
-### Extending an existing codec
+### API Documentation
 
-The built-in `extend` codec can take an existing codec, and wrap it with an additional step to parse/serialize the data.
+Every function provided by this library is documented within its source code.
 
-In this example, we'll write a codec for hexadecimal colour codes (like `#FF0000` or `#E2E2E2`)
-
-```ts
-import { extend, integer, times } from "trashcat";
-import { chunk, flowRight, invoke, map, parseInteger } from "lodash/fp";
-
-const colourCodec = extend(
-  times(integer.UInt8, 3),
-  flowRight(
-    map(invoke('toString', 'hex')),
-    map(invoke('padStart', 2, '0')),
-    invoke('join', '')
-    s => '#' + s
-  ),
-  flowRight(
-    invoke('slice', 1),
-    chunk(2),
-    map(parseInteger(16))
-  )
-);
-```
-
-[lodashfp]: https://github.com/lodash/lodash/wiki/FP-Guide
-
-### Composing codecs by key
-
-In order to parse anything more complicated than a single value, we need to compose some codecs together.
-
-Built-in methods for composing codecs are provided, such as `props`, which is used for building up an object of typed values. This can be used as follows:
-
-```ts
-import { props, integer, string } from "trashcat";
-
-const userCodec = props({
-  id: integer.UInt8,
-  name: string.nullTerminated(),
-  balance: integer.BigUInt64LE,
-});
-
-const buffer = userCodec.serialize({
-  id: 1,
-  name: "Jim",
-  balance: 99999n,
-});
-// => Buffer<01 4a 69 6d 9f 86 01 00 00 00 00 00>
-
-userCodec.parse(buffer, {}).value;
-// => { id: 1, name: 'Jim', balance: 99999n }
-```
-
-The codecs passed into `props` will be used in the order they are defined.
-
-> **N.B.** We do not specify any types for `userCodec`, because `props` is defined such that TypeScript can automatically infer the type of the value.
-
-### Composing codecs by merging objects
-
-To use a series of codecs in order, and merge them into a single object, we can use the `merge` method.
-
-```ts
-import { integer, merge, props, string } from 'trashcat'
-
-const packetHeader = props({
-  version: integer.UInt8
-  token: integer.UInt16LE
-})
-
-const packetBody = props({
-  message: string.nullTerminated('utf8')
-})
-
-const packet = merge(packetHeader, packetBody)
-
-packet.parse(/* buffer */, {})
-// => { version: 1, token: 10101010, message: 'hello!' }
-```
-
-Note that codecs passed into `merge` **must** parse to an object.
-
-## 📖 Full list of built-in codecs
-
-### Number
-
-| Codec                 | JavaScript Type | Serialized Type                       |
-| --------------------- | --------------- | ------------------------------------- |
-| `integer.UInt8`       | number          | unsigned 8-bit integer                |
-| `integer.Int8`        | number          | signed 8-bit integer                  |
-| `integer.UInt16LE`    | number          | unsigned little-endian 16-bit integer |
-| `integer.Int16LE`     | number          | signed little-endian 16-bit integer   |
-| `integer.UInt16BE`    | number          | unsigned big-endian 16-bit integer    |
-| `integer.Int16BE`     | number          | signed big-endian 16-bit integer      |
-| `integer.UInt32LE`    | number          | unsigned little-endian 32-bit integer |
-| `integer.Int32LE`     | number          | signed little-endian 32-bit integer   |
-| `integer.UInt32BE`    | number          | unsigned big-endian 32-bit integer    |
-| `integer.Int32BE`     | number          | signed big-endian 32-bit integer      |
-| `integer.BigUInt64LE` | bigint          | unsigned little-endian 64-bit integer |
-| `integer.BigInt64LE`  | bigint          | signed little-endian 64-bit integer   |
-| `integer.BigUInt64BE` | bigint          | unsigned big-endian 64-bit integer    |
-| `integer.BigInt64BE`  | bigint          | signed big-endian 64-bit integer      |
-
-### Boolean
-
-`boolean` is identical to `number`, except its JavaScript type is `boolean` instead of `number` or `bigint`. Any non-zero number is considered truthy. The first row of the table is shown for posterity, but the rest are removed for brevity.
-
-| Codec           | JavaScript Type | Serialized Type        |
-| --------------- | --------------- | ---------------------- |
-| `boolean.UInt8` | boolean         | unsigned 8-bit integer |
-
-### String
-
-| Codec                                   | JavaScript Type | Serialized Type        |
-| --------------------------------------- | --------------- | ---------------------- |
-| `string.fixedLength(length, encoding?)` | string          | unterminated string    |
-| `string.nullTerminated(encoding?)`      | string          | null-terminated string |
-
-### Array
-
-| Codec                    | Description                                          |
-| ------------------------ | ---------------------------------------------------- |
-| `times(codec, count)`    | Executes `codec` `count` times, and returns an array |
-| `mapUntil(codec, until)` | Executes `codec` until `until` returns `true`        |
-
-### Object
-
-| Codec              | Description                                                                                     |
-| ------------------ | ----------------------------------------------------------------------------------------------- |
-| `props(codecMap)`  | Parses an object, assigning the parsed output of each codec in `codecMap` to its respective key |
-| `merge(...codecs)` | Parses an object by merging the parsed output of all `codecs` in series                         |
-
-### Utility
-
-| Codec                                                           | Description                                                                                   |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `assert(conditionFn, errorMsg)`                                 | Throws an error if the supplied condition is not met                                          |
-| `branch(parseFn, serializeFn)`                                  | Uses the codec returned by `parseFn` or `serializeFn`.                                        |
-| `choose(parseBranch, serializeBranch, branchMap)`               | Uses the codec selected by `parseFn` or `serializeFn`, by key of `branchMap`                  |
-| `constant(value)`                                               | Parses to a constant value, and serializes to an empty buffer                                 |
-| `enum(codec, values)`                                           | Uses `codec`, but throws an error if value is not in `values`                                 |
-| `extend(codec, parse, serialize)`                               | Extend a codec, wrapping it with an extra `parse`/`serialize` method                          |
-| `optional(shouldParse, shouldSerialize, trueCodec, falseCodec)` | If `shouldParse`/`shouldSerialize` return true, then uses `trueCodec`, otherwise `falseCodec` |
-| `padding(length, fill?, encoding?)`                             | Parses to its context, but serializes `length` bytes worth of `fill`                          |
-| `tap(callback)`                                                 | Calls `callback` when parsing and returns its context, serializes to an empty buffer          |
-| `validate(codec, condition, errorMsg)`                          | Extends an existing parser to throw an error if the `condition` returns false                 |
+- Number codecs
+  - [`integer`](./src/number/integer.ts)
+  - [`boolean`](./src/number/boolean.ts)
+- String codecs
+  - [`fixedLength`](./src/string/fixedLength.ts)
+  - [`nullTerminated`](./src/string/nullTerminated.ts)
+- Object codec helpers
+  - [`merge`](./src/object/merge.ts)
+  - [`props`](./src/object/props.ts)
+- Array codec helpers
+  - [`mapTimes`](./src/object/mapTimes.ts)
+  - [`mapWhile`](./src/object/mapWhile.ts)
+  - [`reduceWhile`](./src/object/reduceWhile.ts)
+- Utilities
+  - [`assert`](./src/util/assert.ts)
+  - [`branch`](./src/util/branch.ts)
+  - [`choose`](./src/util/choose.ts)
+  - [`constant`](./src/util/constant.ts)
+  - [`either`](./src/util/either.ts)
+  - [`enumerator`](./src/util/enumerator.ts)
+  - [`extend`](./src/util/extend.ts)
+  - [`padding`](./src/util/padding.ts)
+  - [`tap`](./src/util/tap.ts)
+  - [`validate`](./src/util/validate.ts)
 
 ## ➕ Contributing
 

@@ -22,7 +22,7 @@ export const extend = <T, U, C>(
 ): BufferCodec<U, C> => ({
   parse: (buffer, context) => {
     const { value, byteLength } = codec.parse(buffer, context);
-    return { value: parse(value, context), byteLength };
+    return { value: parse(value, context!), byteLength };
   },
   serialize: (parsed) => codec.serialize(serialize(parsed)),
 });

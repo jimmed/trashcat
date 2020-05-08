@@ -55,8 +55,8 @@ export function mapTimes<T, C extends { [O in K]: number }, K extends keyof C>(
     case "number":
       return mapWhile(codec, (_, __, i) => i < count);
     case "string":
-      return mapWhile(codec, (_, c, i) => i < c[count]);
+      return mapWhile(codec, (_, c, i) => i < c![count]);
     case "function":
-      return mapWhile(codec, (b, c, i) => i < count(b, c));
+      return mapWhile(codec, (b, c, i) => i < count(b, c!));
   }
 }

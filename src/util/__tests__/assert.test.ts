@@ -17,7 +17,7 @@ describe("assert", () => {
 
     it("parses successfully if the condition is met", () => {
       expect(codec.parse(Buffer.alloc(0), goodContext)).toEqual({
-        value: goodContext,
+        value: {},
         byteLength: 0,
       });
     });

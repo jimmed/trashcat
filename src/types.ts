@@ -4,7 +4,7 @@ export interface ParseResult<Parsed> {
 }
 
 export interface BufferCodec<Parsed, Context> {
-  parse(buffer: Buffer, context: Context): ParseResult<Parsed>;
+  parse(buffer: Buffer, context?: Context): ParseResult<Parsed>;
   serialize(parsed: Parsed): Buffer;
 }
 

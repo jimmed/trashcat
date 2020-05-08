@@ -17,7 +17,7 @@ export const props = <T, C>(fields: FieldsOf<T, C>): BufferCodec<T, C> => {
   ][];
 
   return {
-    parse: (buffer, context) =>
+    parse: (buffer, context = {} as C) =>
       fieldEntries.reduce(
         ({ value, byteLength }, [name, { parse }]) => {
           const view = buffer.slice(byteLength);

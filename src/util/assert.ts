@@ -25,7 +25,7 @@ export const assert = <Context>(
   errorMsg?: ThrownError<{}, Context>
 ): BufferCodec<{}, Context> =>
   tap((_, context) => {
-    if (!condition(context)) {
+    if (!condition(context!)) {
       throwError(errorMsg, {}, context);
     }
   });

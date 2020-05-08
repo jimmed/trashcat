@@ -10,7 +10,7 @@ export const branch = <T, C>(
   chooseSerializeBranch: (parsed: T & C) => BufferCodec<T, C>
 ): BufferCodec<T, C> => ({
   parse: (buffer, context) =>
-    chooseParseBranch(buffer, context).parse(buffer, context),
+    chooseParseBranch(buffer, context!).parse(buffer, context),
   serialize: (parsed) =>
     chooseSerializeBranch(parsed as T & C).serialize(parsed),
 });
