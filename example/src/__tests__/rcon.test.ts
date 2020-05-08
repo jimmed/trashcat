@@ -8,7 +8,7 @@ import { Parsed } from "trashcat";
 describe("rconPacket", () => {
   describe.each([
     [
-      "client login packet",
+      "client: auth request",
       [
         0x11,
         0x00,
@@ -34,13 +34,12 @@ describe("rconPacket", () => {
       ],
       {
         id: 0,
-        size: 17,
         body: "passwrd",
         type: PacketType.Auth,
       },
     ],
     [
-      "server login response",
+      "server: auth response",
       [
         0x0a,
         0x00,
@@ -59,13 +58,12 @@ describe("rconPacket", () => {
       ],
       {
         id: 0,
-        size: 10,
         type: PacketType.ResponseValue,
         body: "",
       },
     ],
     [
-      "server login response 2",
+      "server: auth response 2",
       [
         0x0a,
         0x00,
@@ -84,22 +82,99 @@ describe("rconPacket", () => {
       ],
       {
         id: 0,
-        size: 10,
         type: PacketType.Command,
         body: "",
+      },
+    ],
+    [
+      "client: echo command request",
+      [
+        0x19,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x02,
+        0x00,
+        0x00,
+        0x00,
+        0x65,
+        0x63,
+        0x68,
+        0x6f,
+        0x20,
+        0x48,
+        0x4c,
+        0x53,
+        0x57,
+        0x3a,
+        0x20,
+        0x54,
+        0x65,
+        0x73,
+        0x74,
+        0x00,
+        0x00,
+      ],
+      {
+        id: 0,
+        type: PacketType.Command,
+        body: "echo HLSW: Test",
+      },
+    ],
+    [
+      "server: echo command response",
+      [
+        0x17,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x48,
+        0x4c,
+        0x53,
+        0x57,
+        0x20,
+        0x3a,
+        0x20,
+        0x54,
+        0x65,
+        0x73,
+        0x74,
+        0x20,
+        0x0a,
+        0x00,
+        0x00,
+      ],
+      {
+        id: 0,
+        type: PacketType.ResponseValue,
+        body: "HLSW : Test \n",
       },
     ],
   ] as [string, number[], Parsed<typeof rconPacket>][])(
     "with %s",
     (_, bytes, parsedData) => {
       const buffer = Buffer.from(bytes);
-      test("parses", () => {
+
+      it("parses", () => {
         expect(rconPacket.parse(buffer, {})).toEqual({
           byteLength: bytes.length,
           value: parsedData,
         });
       });
-      test("serializes", () => {
+
+      it("serializes", () => {
         expect(rconPacket.serialize(parsedData)).toEqual(buffer);
       });
     }
