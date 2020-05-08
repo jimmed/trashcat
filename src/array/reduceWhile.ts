@@ -54,11 +54,11 @@ export const reduceWhile = <T, U, C>(
     let index = 0;
     let result = initialValue;
 
-    while (whileCallback(buffer.slice(offset), context, index, result)) {
+    while (whileCallback(buffer.slice(offset), context!, index, result)) {
       const view = buffer.slice(offset);
       const lastResult = codec.parse(view, context);
       offset += lastResult.byteLength;
-      result = reduceCallback(result, lastResult.value, context, index);
+      result = reduceCallback(result, lastResult.value, context!, index);
       index++;
     }
 

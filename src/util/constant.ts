@@ -9,7 +9,7 @@ import { BufferCodec } from "../types";
  * This can be useful when using conditional codecs like `branch` and `either`.
  *
  * @example
- *  constant(8 as const).parse(Buffer.alloc(0), {})
+ *  constant(8 as const).parse(Buffer.alloc(0))
  *  // => 8
  *
  *  constant(8 as const).serialize(1234)
