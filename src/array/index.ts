@@ -1,2 +1,2 @@
-export * from "./map";
-export * from "./times";
+export * from "./mapWhile";
+export * from "./mapTimes";

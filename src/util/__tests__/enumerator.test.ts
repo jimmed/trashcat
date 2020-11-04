@@ -1,7 +1,7 @@
 import { integer } from "../../number";
 import { string } from "../../string";
 import { BufferCodec } from "../../types";
-import { enumerator } from "../enum";
+import { enumerator } from "../enumerator";
 
 describe("enumerator", () => {
   describe("with a number codec", () => {
@@ -10,7 +10,7 @@ describe("enumerator", () => {
       TWO = 2,
     }
 
-    const codec = enumerator<NumberEnum>(
+    const codec = enumerator<NumberEnum, any>(
       integer.UInt8,
       Object.values(NumberEnum) as NumberEnum[]
     );
@@ -24,7 +24,7 @@ describe("enumerator", () => {
 
     it("throws an error if the parsed number is not in the enum", () => {
       expect(() => codec.parse(Buffer.from([3]), {})).toThrowError(
-        "Invalid value"
+        'Expected one of [ONE, TWO, 1, 2], but instead got "3"'
       );
     });
 
@@ -35,7 +35,9 @@ describe("enumerator", () => {
     });
 
     it("throws an error if the serialized value is not in the enum", () => {
-      expect(() => codec.serialize(3)).toThrowError("Invalid value");
+      expect(() => codec.serialize(3)).toThrowError(
+        'Expected one of [ONE, TWO, 1, 2], but instead got "3"'
+      );
     });
   });
 
@@ -44,7 +46,7 @@ describe("enumerator", () => {
       ONE = "one",
       TWO = "two",
     }
-    const codec = enumerator<StringEnum>(
+    const codec = enumerator<StringEnum, any>(
       string.fixedLength(3) as BufferCodec<StringEnum, any>,
       Object.values(StringEnum) as StringEnum[]
     );
@@ -58,7 +60,7 @@ describe("enumerator", () => {
 
     it("throws an error if the parsed string is not in the enum", () => {
       expect(() => codec.parse(Buffer.from("three", "utf8"), {})).toThrowError(
-        "Invalid value"
+        'Expected one of [one, two], but instead got "thr"'
       );
     });
 
@@ -70,7 +72,9 @@ describe("enumerator", () => {
 
     it("throws an error if the serialized string is not in the enum", () => {
       // @ts-ignore -- expected error
-      expect(() => codec.serialize("three")).toThrowError("Invalid value");
+      expect(() => codec.serialize("three")).toThrowError(
+        'Expected one of [one, two], but instead got "three"'
+      );
     });
   });
 });

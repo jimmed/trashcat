@@ -1,5 +1,18 @@
 import { BufferCodec } from "../types";
-
+/**
+ * Creates a codec for a null-terminated string with a given encoding.
+ *
+ * @example ```ts
+ * string.nullTerminated().serialize('hello')
+ * // => <Buffer 68 65 6c 6c 6f 00>
+ *
+ * string.nullTerminated('ascii').parse(Buffer.from('hello\0', 'ascii'))
+ * // => 'hello'
+ * ```
+ *
+ * @param byteLength The length of the string in bytes
+ * @param encoding The string encoding to use
+ */
 export const nullTerminatedString = <C>(
   encoding: BufferEncoding = "utf8"
 ): BufferCodec<string, C> => ({

@@ -1,6 +1,6 @@
 import { BufferCodec } from "../../types";
 import { constant } from "../constant";
-import { optional } from "../optional";
+import { either } from "../either";
 
 describe("optional", () => {
   let switcher: jest.Mock;
@@ -12,7 +12,7 @@ describe("optional", () => {
   ])("when the branch method returns %s", (bool, value) => {
     beforeEach(() => {
       switcher = jest.fn().mockReturnValue(bool);
-      codec = optional(
+      codec = either(
         switcher,
         switcher,
         constant("foo" as const),

@@ -1,8 +1,10 @@
+export interface ParseResult<Parsed> {
+  value: Parsed;
+  byteLength: number;
+}
+
 export interface BufferCodec<Parsed, Context> {
-  parse(
-    buffer: Buffer,
-    context: Context
-  ): { value: Parsed; byteLength: number };
+  parse(buffer: Buffer, context?: Context): ParseResult<Parsed>;
   serialize(parsed: Parsed): Buffer;
 }
 
